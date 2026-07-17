@@ -1,0 +1,362 @@
+
+class Customer:
+    def __init__(self, name="", email="", phoneNumber="", address=""):
+        self.name = name
+        self.email = email
+        self.phone_number = phoneNumber
+        self.address = address
+
+    # Accessors and Mutators
+    @property
+    def name_prop(self):
+        return self.name
+
+    def set_name(self, name):
+        self.name = name
+
+    @property
+    def email_prop(self):
+        return self.email
+
+    def set_email(self, email):
+        self.email = email
+
+    @property
+    def phone_number_prop(self):
+        return self.phone_number
+
+    def set_phone_number(self, phone_number):
+        self.phone_number = phone_number
+
+    @property
+    def address_prop(self):
+        return self.address
+
+    def set_address(self, address):
+        self.address = address
+
+
+class Product:
+    ctr = 1  # Static counter
+
+    def __init__(self, product_name="", unit_price=0.0, quantity=0):
+        if product_name:
+            self.id = Product.ctr
+            Product.ctr += 1
+        else:
+            self.id = 0
+            
+        self.product_name = product_name
+        self.unit_price = unit_price
+        self.quantity = quantity
+
+    # Accessors & Mutators
+    def get_id(self):
+        return self.id
+
+    def get_product_name(self):
+        return self.product_name
+
+    def get_unit_price(self):
+        return self.unit_price
+
+    def get_quantity(self):
+        return self.quantity
+
+    def set_id(self, id):
+        self.id = id
+
+    def set_product_name(self, product_name):
+        self.product_name = product_name
+
+    def set_unit_price(self, unit_price):
+        self.unit_price = unit_price
+
+    def set_quantity(self, quantity):
+        self.quantity = quantity
+
+
+class Order:
+    def __init__(self):
+        self.cart_items = []
+        self.grand_total = 0.0
+        self.payment_method = ""
+        self.payment_account_number = ""
+        self.payment_account_name = ""
+        self.shipping_method = ""
+
+    def add_to_cart(self, product):
+        self.grand_total += product.get_unit_price() * product.get_quantity()
+        self.cart_items.append(product)
+
+    def get_cart_list(self):
+        return self.cart_items
+
+    def get_grand_total(self):
+        return self.grand_total
+
+    def get_payment_method(self):
+        return self.payment_method
+
+    def set_payment_method(self, payment_method_choice):
+        if payment_method_choice == 1:
+            self.payment_method = "GCASH"
+        elif payment_method_choice == 2:
+            self.payment_method = "BANK_TRANSFER"
+        else:
+            self.payment_method = "Unknown"
+
+    def get_shipping_method(self):
+        return self.shipping_method
+
+    def set_shipping_method(self, shipping_method_choice):
+        if shipping_method_choice == 1:
+            self.shipping_method = "DOOR_TO_DOOR"
+        elif shipping_method_choice == 2:
+            self.shipping_method = "PICK_UP"
+        else:
+            self.shipping_method = "Unknown"
+
+    def get_payment_account_number(self):
+        return self.payment_account_number
+
+    def set_payment_account_number(self, payment_account_number):
+        self.payment_account_number = payment_account_number
+
+    def get_payment_account_name(self):
+        return self.payment_account_name
+
+    def set_payment_account_name(self, payment_account_name):
+        self.payment_account_name = payment_account_name
+
+
+class Inventory:
+    def __init__(self):
+        self.products = []
+
+    def get_inventory(self):
+        return self.products
+
+    def get_item(self, id):
+        for item in self.products:
+            if item.id == id:
+                return item
+        return None
+
+    def set_product(self, product):
+        self.products.append(product)
+
+
+# --- Global Main App State ---
+inventory = Inventory()
+order = Order()
+customer = Customer()
+
+
+def initialize_product_list():
+    product1 = Product("Laptop", 59000.00, 7)
+    product2 = Product("Android Phone", 6500.00, 11)
+    product3 = Product("Mobile Console", 37000.00, 15)
+    product4 = Product("Desktop Unit", 65250.00, 4)
+    product5 = Product("Home Console", 28500.00, 9)
+
+    inventory.set_product(product1)
+    inventory.set_product(product2)
+    inventory.set_product(product3)
+    inventory.set_product(product4)
+    inventory.set_product(product5)
+
+
+def clear_screen():
+    # RESTORED: This is the exact equivalent of your Java terminal clearing code
+    print("\033[H\033[2J", end="", flush=True)
+
+
+def fake_delay():
+    # RESTORED / ENHANCED: Safely attempts real time.sleep, fallbacks on heavy CPU math 
+    try:
+        import time
+        time.sleep(1)
+    except Exception:
+        # A heavier loop that actually causes a visible ~1 second pause on standard sandboxes
+        for _ in range(25000000):
+            _ = 9999 * 9999
+
+
+def render_menu():
+    print("-----------------------------------------------------------")
+    print("\tBlataditz eCommerce Lite and Retail Management\t")
+    print("\tYour 1-Stop All-You-Need Gaming Store!\t")
+    print("-----------------------------------------------------------\n")
+    print("\tSelect From Menu:")
+    print("\t1. Buy Products Online")
+    print("\t2. Manage Inventory [IN MAINTENANCE]")
+    print("\t3. Visit Digital Store [IN MAINTENANCE]\n")
+
+
+def display_inventory():
+    products = inventory.get_inventory()
+    print("\tList of Products:")
+    for item in products:
+        print(f"\t{item.get_id()}. {item.get_product_name()} - price: {item.get_unit_price():.2f}, stock: {item.get_quantity()}")
+
+
+def display_cart_items():
+    cart_items = order.get_cart_list()
+    print("\tItems in Cart:")
+    for item in cart_items:
+        total_price = item.get_unit_price() * item.get_quantity()
+        print(f"\t[x] {item.get_product_name()} - unit price: {item.get_unit_price():.2f}, qty: {item.get_quantity()}, total: {total_price:.2f}")
+    print(f"\tGrand Total: {order.get_grand_total():.2f}")
+
+
+def input_customer_information():
+    print("-----------------------------------------------------------")
+    print("\tPurchase Order\t")
+    print("-----------------------------------------------------------\n")
+    print("\tCustomer Information:")
+    
+    customer.set_name(input("\tEnter Name: "))
+    customer.set_email(input("\tEnter Email: "))
+    customer.set_phone_number(input("\tEnter Phone Number: "))
+    customer.set_address(input("\tEnter Address: "))
+    
+    print("\tSelect Payment Method: ")
+    print("\t\t1. GCash\n\t\t2. Bank Transfer")
+    try:
+        pay_choice = int(input("\t\tEnter Choice: "))
+    except ValueError:
+        pay_choice = 0
+    order.set_payment_method(pay_choice)
+
+    order.set_payment_account_number(input("\n\t\tEnter Bank/GCash Account Number: "))
+    order.set_payment_account_name(input("\t\tEnter Account Name: "))
+    
+    print("\tSelect Shipping Method: ")
+    print("\t\t1. Door to Door\n\t\t2. Pick Up")
+    try:
+        ship_choice = int(input("\t\tEnter Choice: "))
+    except ValueError:
+        ship_choice = 0
+    order.set_shipping_method(ship_choice)
+
+
+def display_confirmation():
+    clear_screen()
+    print("-----------------------------------------------------------")
+    print("\tOrder Confirmation\t")
+    print("-----------------------------------------------------------\n")
+    print("\tCustomer Information:")
+    print(f"\tName: {customer.name}")
+    print(f"\tEmail: {customer.email}")
+    print(f"\tPhone Number: {customer.phone_number}")
+    print(f"\tAddress: {customer.address}\n")
+
+    display_cart_items()
+
+    print(f"\n\tPayment Method: {order.get_payment_method()}")
+    print(f"\tAccount Number: {order.get_payment_account_number()}")
+    print(f"\tAccount Name: {order.get_payment_account_name()}\n")
+    print(f"\tShipping Method: {order.get_shipping_method()}")
+
+    confirm = input("\n\tCustomer Information confirmed? (y/n): ").strip().lower()
+
+    if confirm.startswith('y'):
+        print("\n\tProcessing your order", end="", flush=True)
+        for _ in range(3):
+            fake_delay()
+            print(".", end="", flush=True)
+        print("\n\tPayment Confirmed!")
+        
+        print("\n\tProcessing Order", end="", flush=True)
+        for _ in range(3):
+            fake_delay()
+            print(".", end="", flush=True)
+        print("\n\tOrder Successfully Placed!")
+    else:
+        print("\n\tOrder cancelled. Returning to main menu...")
+        
+    print("\n\tThank you for your purchase! Redirecting back to main page...\n")
+    return confirm
+
+
+def add_item_to_cart():
+    while True:
+        clear_screen()
+        print("-----------------------------------------------------------")
+        print("\tPurchase Order\t")
+        print("-----------------------------------------------------------\n")
+
+        if len(order.get_cart_list()) > 0:
+            display_cart_items()
+            print("\n-----------------------------------------------------------\n")
+        
+        display_inventory()
+
+        try:
+            prod_choice = int(input("\n\tSelect product to add: "))
+            qty_choice = int(input("\tEnter quantity: "))
+        except ValueError:
+            print("\tInvalid input. Please enter numbers.")
+            fake_delay()
+            continue
+
+        more_choice = input("\tAdd more? (y/n): ").strip().lower()
+        
+        selected_product = inventory.get_item(prod_choice)
+        if selected_product:
+            cart_product = Product(selected_product.get_product_name(), selected_product.get_unit_price(), qty_choice)
+            cart_product.set_id(selected_product.get_id())
+            order.add_to_cart(cart_product)
+        else:
+            print("\tProduct not found.")
+            fake_delay()
+
+        if not more_choice.startswith('y'):
+            break
+
+
+def clear_order_details():
+    global order, customer
+    order = Order()
+    customer = Customer()
+
+
+def main():
+    initialize_product_list()
+    choice = 0
+
+    while choice != 3:
+        render_menu()
+        try:
+            choice = int(input("\tEnter Your Choice: "))
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+            fake_delay()
+            clear_screen()
+            continue
+
+        if choice == 1:
+            while True:
+                add_item_to_cart()
+                clear_screen()
+                input_customer_information()
+                order_choice = display_confirmation()
+                clear_order_details()
+                if not order_choice.startswith('n'):
+                    break
+        elif choice == 2:
+            print("Inventory Management is under maintenance! Redirecting back to main page...")
+            fake_delay()
+            clear_screen()
+        elif choice == 3:
+            print("Digital Store is under maintenance! Will be back online in... never!")
+            fake_delay()
+        else:
+            print("Invalid choice. Please try again.")
+            fake_delay()
+            clear_screen()
+
+
+if __name__ == "__main__":
+    main()
